@@ -37,7 +37,7 @@ STATUS_UNKNOWN = 3
 
 CEPH_COMMAND = "/usr/bin/ceph"
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 
 #We need checks for both of these to determine if the data in is in bytes already.
@@ -407,10 +407,27 @@ class CephProcHandler:
 		if os.path.isfile(fpath) and os.access(fpath, os.X_OK):
 			self.path = fpath
 
-		#I don't like doing this
-		self.data = getProcL([fpath, "status", "-f", "json"])
+		self.cephexec = fpath
+		self.args = []
+		self.data = None
+
+	def addArg(self, arg, val):
+		if not arg:
+			return 0
+
+		self.args.append(arg)
+
+		if val:
+			self.args.append(val)
 
 	def get(self):
+		outgen = [self.cephexec, "status", "-f", "json"]
+		if (self.args):
+			for larg in self.args:
+				outgen.append(larg)
+
+		self.data = getProcL(outgen)
+
 		return self.data
 
 	def __str__(self):
@@ -426,7 +443,8 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="'ceph perf' nagios plugin.")
 
 	parser.add_argument('-q', '--quick', help='quick output configuration (generic + | + pg_perf_storage + pg_perf_througput + pg_perf_ops + osd_perf), one sample unless defined elsewhere.', action='store_true')
-
+	parser.add_argument('-i', '--id', help='ceph client id')
+	parser.add_argument('-k', '--keyring', help='ceph client keyring file')
 	parser.add_argument('-e', '--exec', help='ceph executable path [%s]' % CEPH_COMMAND)
 	parser.add_argument('-s', '--samples', help='samples to take before providing output', default=0, type=int)
 	parser.add_argument('-d', '--sample_delay', help='time between taking each sample in seconds', default=1, type=int)
@@ -449,6 +467,17 @@ if __name__ == "__main__":
 
 	cstatusp = CephStatusParser()
 	cprochandler = CephProcHandler("/usr/bin/ceph") #Why aren't we using the exec arg?
+
+	if args.keyring and not os.path.exists(args.keyring):
+		print("ERROR: keyring file '%s' doesn't exist" % args.keyring)
+		sys.exit(STATUS_UNKNOWN)
+
+	if (args.id):
+		cprochandler.addArg('--id', args.id)
+
+	if (args.keyring):
+		cprochandler.addArg('--keyring', args.keyring)
+
 	cstatusp.generate(cprochandler.get())
 
 	if (args.quick):
