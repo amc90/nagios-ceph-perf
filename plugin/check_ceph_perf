@@ -491,6 +491,11 @@ if __name__ == "__main__":
 			sstatusp = None
 			sstatusp = CephStatusParser()
 			cprochandler = CephProcHandler("/usr/bin/ceph")
+			if (args.id):
+				cprochandler.addArg('--id', args.id)
+			if (args.keyring):
+				cprochandler.addArg('--keyring', args.keyring)
+
 			sstatusp.generate(cprochandler.get())
 			sstatusp.add(cstatusp)
 			time.sleep(args.sample_delay)
