@@ -522,6 +522,7 @@ if __name__ == "__main__":
 	for arg in vars(args):
 		if 'perf' in arg and (getattr(args, arg) == True):
 			out += "| "
+			break
 
 	#Perf data.
 	if (args.mon_generic_perf):
