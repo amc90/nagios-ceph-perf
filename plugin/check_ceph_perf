@@ -455,7 +455,7 @@ if __name__ == "__main__":
 	parser.add_argument('--mon_storage_perf', help='render mon perf data (kb_avail,_total,_used)', action='store_true')
 	parser.add_argument('--mon_store_stats_perf', help='render mon perf data (bytes_log,_misc,_sst,_total)', action='store_true')
 
-	parser.add_argument('--osd_generic', help='render generic osd data (nearfull, full), defaults to 0', action='store_true')
+	parser.add_argument('--osd_generic', help='render generic osd data (nearfull, full), defaults to 0', nargs='?', default=0, type=int)
 	parser.add_argument('--osd_perf', help='render osd perf data (num_osds, _up_osds,_in_osds', action='store_true')
 
 	parser.add_argument('--pg_perf_storage', help='render pg perf data (bytes_avail, _total, _used)', action='store_true')
@@ -511,7 +511,7 @@ if __name__ == "__main__":
 	if (args.mon_generic):
 		out += cstatusp.get_mon_generic(0) #We want the level to be modified too.
 	if (args.osd_generic):
-		out += cstatusp.get_osd_generic()
+		out += cstatusp.get_osd_generic(args.osd_generic)
 
 	#If any perf data was requested, add the requred |
 	for arg in vars(args):

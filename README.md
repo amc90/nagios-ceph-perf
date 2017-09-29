@@ -10,9 +10,9 @@ usage: check_ceph_perf [-h] [-q] [-i ID] [-k KEYRING] [-e EXEC] [-s SAMPLES]
                        [-d SAMPLE_DELAY] [--generic_level GENERIC_LEVEL]
                        [--mon_generic] [--mon_generic_perf]
                        [--mon_storage_perf] [--mon_store_stats_perf]
-                       [--osd_generic] [--osd_perf] [--pg_perf_storage]
-                       [--pg_perf_states] [--pg_perf_throughput]
-                       [--pg_perf_ops]
+                       [--osd_generic OSD_GENERIC] [--osd_perf]
+                       [--pg_perf_storage] [--pg_perf_states]
+                       [--pg_perf_throughput] [--pg_perf_ops]
 
 'ceph perf' nagios plugin.
 
@@ -38,7 +38,8 @@ optional arguments:
   --mon_storage_perf    render mon perf data (kb_avail,_total,_used)
   --mon_store_stats_perf
                         render mon perf data (bytes_log,_misc,_sst,_total)
-  --osd_generic         render generic osd data (nearfull, full), defaults to
+  --osd_generic OSD_GENERIC
+                        render generic osd data (nearfull, full), defaults to
                         0
   --osd_perf            render osd perf data (num_osds, _up_osds,_in_osds
   --pg_perf_storage     render pg perf data (bytes_avail, _total, _used)
